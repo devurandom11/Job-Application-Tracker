@@ -25,6 +25,15 @@ def check_for_spreadsheet(filename):
         return False
 
 
+def generate_new_filename(base_path, ext, start_index=1):
+    index = start_index
+    while True:
+        new_filename = f"{base_path}_{index}{ext}"
+        if not os.path.exists(new_filename):
+            return new_filename
+        index += 1
+
+
 def save_to_excel(job_details, filename):
     if not os.path.exists(filename):
         wb = Workbook()
@@ -46,21 +55,31 @@ def main():
     args = parser.parse_args()
 
     filename = args.file
+    if filename is None:
+        filename = "job_application_tracker.xlsx"
+    attempts = 0
     while True:
         if os.path.exists(filename) and not check_for_spreadsheet(filename):
-            print("File exists but does not contain correct headers")
+            print("File exists but does not contain correct headers.")
             user_choice = input(
-                "Would you like to create a new worksheet in the same directory? (y/N): "
+                "Would you like to create a new file in the same directory? (y/n) "
             ).lower()
+
             if user_choice == "y":
                 path, ext = os.path.splitext(filename)
-                filename = f"{path}_new{ext}"
+                filename = generate_new_filename(path, ext)
                 break
             elif user_choice == "n":
-                print("Exiting")
+                print("Exiting...")
                 exit()
             else:
-                print("Invalid choice")
+                print("Invalid choice. Please enter 'y' for yes or 'n' for no.")
+                attempts += 1
+                if attempts >= 5:
+                    print("Maximum attempts reached. Exiting...")
+                    exit()
+        else:
+            break
 
     print("Job Application Tracker")
 
