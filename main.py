@@ -1,5 +1,7 @@
 import openpyxl
 from openpyxl import Workbook
+from openpyxl.styles import PatternFill
+from openpyxl.formatting.rule import CellIsRule
 import os
 import argparse
 import sys
@@ -15,6 +17,8 @@ def check_for_spreadsheet(filename):
         "Company",
         "Location",
         "Job Role",
+        "Date Since Submission",
+        "Followed Up?",
     ]
 
     try:
@@ -114,13 +118,55 @@ def save_to_excel(job_details, filename):
         wb = Workbook()
         sheet = wb.active
         sheet.append(
-            ["Job Title", "Website", "Date Applied", "Company", "Location", "Job Role"]
+            [
+                "Job Title",
+                "Website",
+                "Date Applied",
+                "Company",
+                "Location",
+                "Job Role",
+                "Date Since Submission",
+                "Followed Up?",
+            ]
         )
     else:
         wb = openpyxl.load_workbook(filename)
         sheet = wb.active
 
-    sheet.append(job_details)
+    row = sheet.max_row + 1
+    sheet.append(job_details + [f"=TODAY()-C{row}", ""])
+
+    date_since_submission_cell = f"G{row}"
+    sheet[date_since_submission_cell].value = f"=TODAY()-C{row}"
+
+    red_fill = PatternFill(start_color="FFC7CE", end_color="FFC7CE", fill_type="solid")
+    yellow_fill = PatternFill(
+        start_color="FFEB9C", end_color="FFEB9C", fill_type="solid"
+    )
+    green_fill = PatternFill(
+        start_color="C6EFCE", end_color="C6EFCE", fill_type="solid"
+    )
+
+    sheet.conditional_formatting.add(
+        f"G{row}",
+        CellIsRule(operator="lessThan", formula=["7"], stopIfTrue=True, fill=red_fill),
+    )
+    sheet.conditional_formatting.add(
+        f"G{row}",
+        CellIsRule(
+            operator="between", formula=["7", "14"], stopIfTrue=True, fill=yellow_fill
+        ),
+    )
+    sheet.conditional_formatting.add(
+        f"G{row}",
+        CellIsRule(
+            operator="greaterThanOrEqual",
+            formula=["14"],
+            stopIfTrue=True,
+            fill=green_fill,
+        ),
+    )
+
     wb.save(filename)
 
     print(f"Job details saved successfully to {filename}")

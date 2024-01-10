@@ -2,7 +2,7 @@
 
 ## Description
 
-Job Application Tracker is a Python CLI tool designed to help me track my job applications. It allows users to input job application details such as job title, website, date applied, company name, location, and job role, and saves this information in an Excel spreadsheet. This tool ensures that job application details are organized and easily accessible. I'm sure there are other tools out there that do the same thing, but I wanted to create my own to practice my Python skills.
+Job Application Tracker is a Python CLI tool designed to help me track my job applications. It allows users to input job application details such as job title, website, date applied, company name, location, and job role, and saves this information in an Excel spreadsheet. Additionally, it calculates the days since each application was submitted and visually indicates the urgency for follow-up actions. I'm sure there are many other tools out there that do the same thing, but I wanted to create my own to practice my Python skills.
 
 ## Features
 
@@ -10,12 +10,14 @@ Job Application Tracker is a Python CLI tool designed to help me track my job ap
 - Ability to specify a custom Excel file for storing job application details.
 - Automatically creates a new Excel file if none exists or if the existing file doesn't match the expected format.
 - Safe handling of Excel files to prevent data loss.
+- Automatically calculates the days since each job application was submitted.
+- Color-coded indication in the Excel file for follow-up actions based on the time elapsed since application submission.
 
 ## Requirements
 
 - Python 3.x
-- `openpyxl` module
-- `dateutil` module
+- `openpyxl` module for handling Excel files.
+- `dateutil` module for date parsing.
 
 ## Installation
 
@@ -25,7 +27,7 @@ Job Application Tracker is a Python CLI tool designed to help me track my job ap
     git clone https://github.com/devurandom11/Job-Application-Tracker.git
     ```
 
-2. Navigate to the cloned directory
+2. Navigate to the cloned directory.
 
 3. Install the required modules:
 
@@ -61,3 +63,11 @@ The Excel file used to store job application details contains the following colu
 - Company Name
 - Location
 - Job Role
+- Date Since Submission (automatically calculated)
+- Followed Up? (for manual user input to indicate whether follow-up actions have been taken)
+
+## Additional Functionality
+
+- The "Date Since Submission" column uses an Excel formula to calculate the number of days since the application date.
+- This column is color-coded: Red if less than 7 days, Yellow if between 7 and 14 days, and Green if 14 days or more have passed since the application date.
+- The "Followed Up?" column is provided for users to manually mark whether they have followed up on the application.
