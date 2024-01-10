@@ -132,7 +132,7 @@ def main():
     job_details = get_user_details()
     save_to_excel(job_details, filename)
 
-    print("Job details saved successfully")
+    print(f"Job details saved successfully to {filename}")
 
 
 if __name__ == "__main__":
