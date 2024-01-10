@@ -37,6 +37,41 @@ def generate_new_filename(base_path, ext, start_index=1):
         index += 1
 
 
+def parse_arguments():
+    parser = argparse.ArgumentParser(description="Job Application Tracker")
+    parser.add_argument("-f", "--file", help="File to save job details to")
+    return parser.parse_args()
+
+
+def get_file_name(args):
+    filename = args.file if args.file else "job_application_tracker.xlsx"
+    if os.path.exists(filename) and not check_for_spreadsheet(filename):
+        return handle_existing_file(filename)
+    return filename
+
+
+def handle_existing_file(filename):
+    attempts = 0
+    while True:
+        print("File exists but does not contain correct headers.")
+        user_choice = input(
+            "Would you like to create a new file in the same directory? (y/n) "
+        ).lower()
+
+        if user_choice == "y":
+            path, ext = os.path.splitext(filename)
+            return generate_new_filename(path, ext)
+        elif user_choice == "n":
+            print("Exiting...")
+            sys.exit()
+        else:
+            print("Invalid choice. Please enter 'y' for yes or 'n' for no.")
+            attempts += 1
+            if attempts >= 5:
+                print("Maximum attempts reached. Exiting...")
+                sys.exit()
+
+
 def get_valid_website():
     while True:
         website = input("Enter website: ").strip()
@@ -64,6 +99,16 @@ def get_valid_date():
             print("Invalid date format. Please try again.")
 
 
+def get_user_details():
+    job_title = input("Enter job title: ")
+    website = get_valid_website()
+    date_applied = get_valid_date()
+    company = input("Enter company name: ")
+    location = input("Enter location: ")
+    job_role = input("Enter job role: ")
+    return [job_title, website, date_applied, company, location, job_role]
+
+
 def save_to_excel(job_details, filename):
     if not os.path.exists(filename):
         wb = Workbook()
@@ -80,55 +125,11 @@ def save_to_excel(job_details, filename):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Job Application Tracker")
-    parser.add_argument("-f", "--file", help="File to save job details to")
-    args = parser.parse_args()
-
-    filename = args.file
-    if filename is None:
-        filename = "job_application_tracker.xlsx"
-    attempts = 0
-    while True:
-        if os.path.exists(filename) and not check_for_spreadsheet(filename):
-            print("File exists but does not contain correct headers.")
-            user_choice = input(
-                "Would you like to create a new file in the same directory? (y/n) "
-            ).lower()
-
-            if user_choice == "y":
-                path, ext = os.path.splitext(filename)
-                filename = generate_new_filename(path, ext)
-                break
-            elif user_choice == "n":
-                print("Exiting...")
-                sys.exit()
-
-            else:
-                print("Invalid choice. Please enter 'y' for yes or 'n' for no.")
-                attempts += 1
-                if attempts >= 5:
-                    print("Maximum attempts reached. Exiting...")
-                    sys.exit()
-        else:
-            break
-
+    args = parse_arguments()
+    filename = get_file_name(args)
     print("Job Application Tracker\n")
 
-    job_title = input("Enter job title: ")
-    website = get_valid_website()
-    date_applied = get_valid_date()
-    company = input("Enter company name: ")
-    location = input("Enter location: ")
-    job_role = input("Enter job role: ")
-
-    job_details = [
-        job_title,
-        website,
-        date_applied,
-        company,
-        location,
-        job_role,
-    ]
+    job_details = get_user_details()
     save_to_excel(job_details, filename)
 
     print("Job details saved successfully")
