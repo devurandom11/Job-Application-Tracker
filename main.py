@@ -2,6 +2,9 @@ import openpyxl
 from openpyxl import Workbook
 import os
 import argparse
+import sys
+from urllib.parse import urlparse
+from dateutil import parser as date_parser
 
 
 def check_for_spreadsheet(filename):
@@ -98,17 +101,18 @@ def main():
                 break
             elif user_choice == "n":
                 print("Exiting...")
-                exit()
+                sys.exit()
+
             else:
                 print("Invalid choice. Please enter 'y' for yes or 'n' for no.")
                 attempts += 1
                 if attempts >= 5:
                     print("Maximum attempts reached. Exiting...")
-                    exit()
+                    sys.exit()
         else:
             break
 
-    print("Job Application Tracker")
+    print("Job Application Tracker\n")
 
     job_title = input("Enter job title: ")
     website = get_valid_website()
