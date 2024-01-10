@@ -123,6 +123,8 @@ def save_to_excel(job_details, filename):
     sheet.append(job_details)
     wb.save(filename)
 
+    print(f"Job details saved successfully to {filename}")
+
 
 def main():
     args = parse_arguments()
@@ -131,8 +133,6 @@ def main():
 
     job_details = get_user_details()
     save_to_excel(job_details, filename)
-
-    print(f"Job details saved successfully to {filename}")
 
 
 if __name__ == "__main__":
