@@ -34,6 +34,33 @@ def generate_new_filename(base_path, ext, start_index=1):
         index += 1
 
 
+def get_valid_website():
+    while True:
+        website = input("Enter website: ").strip()
+        if not website.startswith("https://"):
+            website = "https://" + website
+
+        try:
+            result = urlparse(website)
+            if all([result.scheme, result.netloc]):
+                return website
+            else:
+                print(
+                    "Invalid website format. Please enter a valid URL starting with 'https://'."
+                )
+        except Exception as e:
+            print(f"Invalid website format: {e}. Please try again.")
+
+
+def get_valid_date():
+    while True:
+        date_input = input("Enter date applied: ")
+        try:
+            return date_parser.parse(date_input).strftime("%Y-%m-%d")
+        except ValueError:
+            print("Invalid date format. Please try again.")
+
+
 def save_to_excel(job_details, filename):
     if not os.path.exists(filename):
         wb = Workbook()
@@ -84,9 +111,9 @@ def main():
     print("Job Application Tracker")
 
     job_title = input("Enter job title: ")
-    website = input("Enter website: ")
-    date_applied = input("Enter date applied: ")
-    company = input("Enter company: ")
+    website = get_valid_website()
+    date_applied = get_valid_date()
+    company = input("Enter company name: ")
     location = input("Enter location: ")
     job_role = input("Enter job role: ")
 
